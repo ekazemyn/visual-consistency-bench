@@ -1,0 +1,15 @@
+Demo fixture reuse permission (LicenseRef-Demo-Fixtures)
+
+Scope: the PNG files in assets/ and overview.png in this directory.
+
+These fixtures are self-created procedural geometric images. They do not contain
+downloaded photos, generative-model outputs, third-party textures, or private images.
+
+Permission is granted to use, copy, modify, and redistribute these fixture images
+for any purpose, with or without modification, provided this permission notice
+is retained with redistributed copies or collections containing the fixtures.
+
+The fixtures are provided as-is, without warranty.
+
+This permission applies only to the fixture images described above. It does not
+establish a license for other repository code, third-party packages, or datasets.

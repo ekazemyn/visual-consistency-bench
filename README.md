@@ -79,3 +79,5 @@ MJPG/AVI; support for other codecs depends on the installed OpenCV build.
 See [environment verification](docs/environment.md) for tested capabilities and limitations.
 The [image evaluation contract](docs/image-evaluation.md) defines input requirements,
 mask semantics, and preservation-result interpretation.
+The [image control collection](examples/images/README.md) includes eight reproducible
+synthetic examples with masks, provenance, and documented expected behavior.

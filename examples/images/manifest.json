@@ -1,0 +1,134 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "image-controls-01",
+  "samples": [
+    {
+      "sample_id": "identity",
+      "source_group_id": "geometric-scene-01",
+      "original_path": "assets/original.png",
+      "edited_path": "assets/identity.png",
+      "mask_path": "assets/edit-mask.png",
+      "instruction": "Leave the image unchanged.",
+      "sample_kind": "synthetic_control",
+      "provenance": {
+        "source": "Self-created geometric control; reproduced by create_controls.py.",
+        "source_url": null,
+        "license": "LicenseRef-Demo-Fixtures",
+        "license_reference": "LICENSE.txt",
+        "generator": null
+      }
+    },
+    {
+      "sample_id": "local-recolor",
+      "source_group_id": "geometric-scene-01",
+      "original_path": "assets/original.png",
+      "edited_path": "assets/local-recolor.png",
+      "mask_path": "assets/edit-mask.png",
+      "instruction": "Change the blue square to red while preserving its surroundings.",
+      "sample_kind": "synthetic_control",
+      "provenance": {
+        "source": "Self-created geometric control; reproduced by create_controls.py.",
+        "source_url": null,
+        "license": "LicenseRef-Demo-Fixtures",
+        "license_reference": "LICENSE.txt",
+        "generator": null
+      }
+    },
+    {
+      "sample_id": "outside-patch",
+      "source_group_id": "geometric-scene-01",
+      "original_path": "assets/original.png",
+      "edited_path": "assets/outside-patch.png",
+      "mask_path": "assets/edit-mask.png",
+      "instruction": "Change the blue square to red while preserving its surroundings.",
+      "sample_kind": "synthetic_control",
+      "provenance": {
+        "source": "Self-created geometric control; reproduced by create_controls.py.",
+        "source_url": null,
+        "license": "LicenseRef-Demo-Fixtures",
+        "license_reference": "LICENSE.txt",
+        "generator": null
+      }
+    },
+    {
+      "sample_id": "boundary-spill",
+      "source_group_id": "geometric-scene-01",
+      "original_path": "assets/original.png",
+      "edited_path": "assets/boundary-spill.png",
+      "mask_path": "assets/edit-mask.png",
+      "instruction": "Change the blue square to red while preserving its surroundings.",
+      "sample_kind": "synthetic_control",
+      "provenance": {
+        "source": "Self-created geometric control; reproduced by create_controls.py.",
+        "source_url": null,
+        "license": "LicenseRef-Demo-Fixtures",
+        "license_reference": "LICENSE.txt",
+        "generator": null
+      }
+    },
+    {
+      "sample_id": "global-color-shift",
+      "source_group_id": "geometric-scene-01",
+      "original_path": "assets/original.png",
+      "edited_path": "assets/global-color-shift.png",
+      "mask_path": "assets/edit-mask.png",
+      "instruction": "Change the blue square to red while preserving its surroundings.",
+      "sample_kind": "synthetic_control",
+      "provenance": {
+        "source": "Self-created geometric control; reproduced by create_controls.py.",
+        "source_url": null,
+        "license": "LicenseRef-Demo-Fixtures",
+        "license_reference": "LICENSE.txt",
+        "generator": null
+      }
+    },
+    {
+      "sample_id": "unchanged-failed-edit",
+      "source_group_id": "geometric-scene-01",
+      "original_path": "assets/original.png",
+      "edited_path": "assets/unchanged-failed-edit.png",
+      "mask_path": "assets/edit-mask.png",
+      "instruction": "Change the blue square to red while preserving its surroundings.",
+      "sample_kind": "synthetic_control",
+      "provenance": {
+        "source": "Self-created geometric control; reproduced by create_controls.py.",
+        "source_url": null,
+        "license": "LicenseRef-Demo-Fixtures",
+        "license_reference": "LICENSE.txt",
+        "generator": null
+      }
+    },
+    {
+      "sample_id": "wrong-local-color",
+      "source_group_id": "geometric-scene-01",
+      "original_path": "assets/original.png",
+      "edited_path": "assets/wrong-local-color.png",
+      "mask_path": "assets/edit-mask.png",
+      "instruction": "Change the blue square to red while preserving its surroundings.",
+      "sample_kind": "synthetic_control",
+      "provenance": {
+        "source": "Self-created geometric control; reproduced by create_controls.py.",
+        "source_url": null,
+        "license": "LicenseRef-Demo-Fixtures",
+        "license_reference": "LICENSE.txt",
+        "generator": null
+      }
+    },
+    {
+      "sample_id": "no-preservation-support",
+      "source_group_id": "geometric-scene-01",
+      "original_path": "assets/original.png",
+      "edited_path": "assets/no-preservation-support.png",
+      "mask_path": "assets/full-edit-mask.png",
+      "instruction": "Change the blue square to red while preserving its surroundings.",
+      "sample_kind": "synthetic_control",
+      "provenance": {
+        "source": "Self-created geometric control; reproduced by create_controls.py.",
+        "source_url": null,
+        "license": "LicenseRef-Demo-Fixtures",
+        "license_reference": "LICENSE.txt",
+        "generator": null
+      }
+    }
+  ]
+}

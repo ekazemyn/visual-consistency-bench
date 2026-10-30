@@ -74,6 +74,10 @@ See [the illustrative manifest](../examples/image-manifest.example.json). Its as
 paths are placeholders and rights metadata are explicitly unknown: it is a format
 example, not a runnable dataset or a claim about existing images.
 
+The [procedural control collection](../examples/images/README.md) provides a separate
+[manifest with included assets](../examples/images/manifest.json). It demonstrates
+known pixel changes; it is not evidence of performance on generated model outputs.
+
 ## Image and mask representation
 
 ### Supported input boundary
