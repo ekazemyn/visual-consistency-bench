@@ -81,3 +81,5 @@ The [image evaluation contract](docs/image-evaluation.md) defines input requirem
 mask semantics, and preservation-result interpretation.
 The [image control collection](examples/images/README.md) includes eight reproducible
 synthetic examples with masks, provenance, and documented expected behavior.
+The [Python loading API](docs/image-evaluation.md#load-and-validate-inputs) validates
+manifests and loads aligned RGB images and binary masks without resizing or scoring them.

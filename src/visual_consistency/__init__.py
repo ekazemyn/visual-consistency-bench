@@ -1,1 +1,1 @@
-"""Visual consistency research package; evaluation implementation is pending."""
+"""CPU-first visual consistency research tools."""

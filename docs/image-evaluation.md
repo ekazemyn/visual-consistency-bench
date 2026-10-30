@@ -3,8 +3,44 @@
 Contract version: `1.0`.
 
 This document specifies inputs, validation, and result semantics for evaluating changes
-outside a permitted image-edit region. It is an interface specification, not an
-implemented evaluator or a claim that the measurements agree with human judgments.
+outside a permitted image-edit region. It specifies behavior without claiming that
+the measurements agree with human judgments. Manifest and asset loading
+are available through the Python API below; metric evaluation is not implemented.
+
+## Load and validate inputs
+
+From Python with the project installed, run from the repository root:
+
+```python
+from visual_consistency.images import load_sample
+from visual_consistency.manifest import ValidationError, load_manifest
+
+manifest = load_manifest("examples/images/manifest.json")
+for record in manifest.samples:
+    try:
+        loaded = load_sample(manifest, record)
+    except ValidationError as error:
+        print(record["sample_id"], error.code, str(error))
+        continue
+    print(record["sample_id"], loaded.original.shape, loaded.warnings)
+```
+
+`load_manifest` checks JSON structure, metadata, identifiers, duplicate sample IDs,
+and contained paths. Structural errors raise `ValidationError` with code
+`invalid_manifest` before samples load. File existence, decode validity, local license
+notice existence, and matching dimensions are checked by `load_sample`; one bad asset
+does not prevent a caller from inspecting subsequent records. URLs are never fetched.
+
+`LoadedSample.original` and `.edited` are RGB `uint8` arrays, not normalized floats.
+`.edit_mask` is a two-dimensional boolean array: True permits editing. `.input_modes`
+records original Pillow modes, including grayscale conversion. `.record` retains the
+validated sample metadata, and `.warnings` contains code/message objects. No resampling,
+metrics, or automatic editing-success judgments occur. An all-255 mask loads with an
+`empty_preservation_region` warning. A missing source URL or license field, or unknown
+generator details, produces `unknown_provenance`; it does not invalidate image pixels.
+
+Pass records from the validated manifest unchanged to `load_sample`. It rechecks
+resolved path containment when opening assets, but is not a second JSON-schema parser.
 
 ## What is measured
 
@@ -90,6 +126,9 @@ known pixel changes; it is not evidence of performance on generated model output
   conversion, histogram matching, exposure correction, or color-profile conversion is
   applied. Reject embedded ICC profiles to avoid silently ignoring declared color spaces.
   sRGB declarations are allowed; other explicit conflicting color declarations are invalid.
+  Supported declarations are sRGB, matching gAMA (`0.45455`) and matching sRGB cHRM
+  coordinates (absolute tolerance `0.00001`). Advanced cICP/mDCV/cLLI color metadata
+  is unsupported and rejected rather than silently interpreted.
 - Images and masks must have absent or identity EXIF orientation. Reject nonidentity
   orientation instead of independently rotating assets and risking mask misalignment.
 - Require positive dimensions, at most 4,096 pixels on either side, and at most
@@ -175,7 +214,7 @@ Warnings/errors carry a stable code and human-readable message. Initial codes in
 `unknown_provenance`, `empty_preservation_region`, `insufficient_ssim_support`,
 `missing_asset`, `invalid_image`, `invalid_mask`, `dimension_mismatch`,
 `unsupported_input`, and `input_limit_exceeded`. Messages must avoid exposing absolute
-paths in shareable output. Manifest structural errors are reported at run level.
+paths in shareable output. Manifest structural errors use `invalid_manifest` at run level.
 
 All serialized numbers must be finite. Undefined metric values are JSON null plus a
 status/reason, never zero placeholders or nonstandard NaN/Infinity. Exact JSON nesting
