@@ -77,3 +77,5 @@ executable is required for the environment checks. Video I/O is verified with
 MJPG/AVI; support for other codecs depends on the installed OpenCV build.
 
 See [environment verification](docs/environment.md) for tested capabilities and limitations.
+The [image evaluation contract](docs/image-evaluation.md) defines input requirements,
+mask semantics, and preservation-result interpretation.

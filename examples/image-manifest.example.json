@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "dataset_id": "image-contract-example",
+  "samples": [
+    {
+      "sample_id": "square-recolor-control",
+      "source_group_id": "square-scene",
+      "original_path": "images/square-original.png",
+      "edited_path": "images/square-edited.png",
+      "mask_path": "images/square-edit-mask.png",
+      "instruction": "Change the blue square to red while preserving its surroundings.",
+      "sample_kind": "synthetic_control",
+      "provenance": {
+        "source": "Illustrative self-created control; asset files are not included.",
+        "source_url": null,
+        "license": null,
+        "license_reference": null,
+        "generator": null
+      }
+    }
+  ]
+}
