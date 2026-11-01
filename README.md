@@ -83,3 +83,6 @@ The [image control collection](examples/images/README.md) includes eight reprodu
 synthetic examples with masks, provenance, and documented expected behavior.
 The [Python loading API](docs/image-evaluation.md#load-and-validate-inputs) validates
 manifests and loads aligned RGB images and binary masks without resizing or scoring them.
+The [measurement API](docs/image-evaluation.md#python-measurement-api) computes
+preservation MAE, PSNR, and SSIM over fully supported windows, plus descriptive
+inside-mask MAE. These are pixel-change diagnostics, not editing-success judgments.

@@ -5,7 +5,7 @@ Contract version: `1.0`.
 This document specifies inputs, validation, and result semantics for evaluating changes
 outside a permitted image-edit region. It specifies behavior without claiming that
 the measurements agree with human judgments. Manifest and asset loading
-are available through the Python API below; metric evaluation is not implemented.
+and preservation measurements are available through the Python APIs below.
 
 ## Load and validate inputs
 
@@ -160,6 +160,52 @@ provides no preservation support: loading succeeds, but preservation metrics are
 `not_applicable`. Mask direction is never inferred from the images or instruction.
 
 ## Measurement semantics
+
+### Python measurement API
+
+Pass an unchanged `LoadedSample` from `load_sample` to the measurement function:
+
+```python
+from visual_consistency.metrics import measure_preservation
+
+measurements = measure_preservation(loaded)
+```
+
+The returned dictionary contains `support`, `metrics`, and measurement `warnings`.
+Input warnings remain on `loaded.warnings`; callers retain both lists. This API does
+not yet produce a complete run result, CLI output, or report. It does not mutate inputs.
+Metric records include `value`, `status`, `support_count`, `support_unit`, `direction`,
+and effective `parameters`. Pixel support counts spatial pixels, each contributing
+three equally weighted RGB channels.
+
+For preservation pixels P and normalized channel difference d = (edited-original)/255:
+MAE = sum(abs(d))/(3|P|), MSE = sum(d²)/(3|P|), and PSNR = -10 log10(MSE), in dB.
+Calculations use float64 to avoid byte subtraction wraparound. MSE is an intermediate,
+not a separately reported metric. `inside_mask_mae` applies the same MAE formula to
+permitted-edit pixels with direction `descriptive`; empty inside support yields null
+and `not_applicable`. It cannot determine instruction success.
+
+`preservation_ssim` uses scikit-image's per-channel SSIM maps with fixed, uniform
+7×7 windows, data range 1, sample covariance (49/48 normalization), K1=0.01 and
+K2=0.03. Each map value uses
+((2μxμy+C1)(2cov(x,y)+C2))/((μx²+μy²+C1)(var(x)+var(y)+C2)),
+where C1=0.01² and C2=0.03². Average equally across RGB channels and valid window
+centers only. Binary erosion with a 7×7 footprint and false image borders determines
+support: the entire window must be inside the image and outside the edit mask.
+No masked pixel replacement occurs. This uniform-window variant does not claim to
+reproduce the original Gaussian-weighted SSIM protocol. SSIM can be negative and is
+not clamped or transformed into a quality percentage.
+
+A single valid window suffices; fewer than one yields null, `not_applicable`, and
+`insufficient_ssim_support`. Images smaller than 7 pixels on either axis therefore
+have no SSIM support. MAE/PSNR still apply when at least one preservation pixel exists.
+An empty preservation region makes all three preservation metrics not applicable.
+Identity PSNR is null with `perfect_match`; output can be serialized with
+`json.dumps(measurements, allow_nan=False)`.
+
+These measurements are sensitive to alignment, color encoding, and mask boundaries.
+SSIM ignores preservation pixels lacking complete windows; its support differs from
+MAE/PSNR. None measures semantic correctness or establishes human-perceived quality.
 
 Use RGB channel values normalized from bytes to `[0, 1]`. Preservation MAE and MSE
 are means over all three channels of pixels where logical mask equals zero. PSNR
