@@ -271,7 +271,7 @@ Errors must not silently exclude difficult examples from counts or comparisons.
 
 With the project installed, run `python -m visual_consistency MANIFEST OUTPUT_DIR`
 or `visual-consistency MANIFEST OUTPUT_DIR`. No weights or network access are needed.
-`--overwrite` permits replacement of `results.json` and `metrics.csv` only; unrelated
+`--overwrite` permits replacement of `results.json`, `metrics.csv`, and `report.html`; unrelated
 files are retained. Output targets cannot replace the manifest, input assets, local
 license notices, or symlink targets. Keep inputs unchanged throughout a run: hashing
 and decoding are separate reads, not a filesystem snapshot.
@@ -302,7 +302,7 @@ status to distinguish perfect PSNR from not-applicable results. Instruction and
 provenance text stay in JSON rather than being duplicated into spreadsheet cells.
 
 Exit code 0 means no sample failed; 1 means outputs were written with sample failures;
-2 means argument, manifest, or I/O/output failure. Invalid manifests produce no result
+2 means argument, manifest, or I/O/report failure. Invalid manifests produce no result
 files. Output writing is not transactional: an I/O failure can leave partial output;
 check the exit code before consuming it. Existing result files are refused without
 `--overwrite`. Timing excludes manifest validation and serialization/writing; sample
@@ -313,8 +313,45 @@ and run/sample durations vary.
 The output deliberately omits local asset paths, manifest/output paths, user names,
 and host details. Original manifests and assets remain local. Instructions and
 provenance are copied as supplied and can contain private text or URLs: review them
-before sharing results. These JSON/CSV files are not an HTML report or a validated
+before sharing results. These outputs are pixel-change diagnostics, not a validated
 quality benchmark.
+
+### Offline visual report
+
+`report.html` is a portable, self-contained inspection report. Copying just this file
+is sufficient to view it offline; it uses embedded PNGs and CSS, system fonts, and
+no scripts or external resources. Supplied text and display filenames are HTML-escaped;
+provenance URLs are displayed as text rather than fetched or made executable.
+Instructions, provenance, and displayed filenames can still contain private information,
+and embedded images retain their original distribution restrictions. Review before sharing.
+
+Each sample shows original and edited images, the original with a magenta permitted-edit
+mask overlay (40% tint), and an absolute-difference view. Difference intensity is the
+mean absolute RGB byte difference divided by 255: black means 0, white means 1.
+The scale is fixed across samples, includes both regions, and is not independently
+normalized per image. All panels preserve aspect ratio at the same scale and are
+downsampled with bilinear filtering to at most 256 pixels per side. Mask tint and
+differences are constructed before downsampling. Small artifacts may be hidden by
+preview resolution; full-resolution pixels determine all measurements.
+
+The report retains sample order, explicit failures, warnings, metric statuses/directions,
+support counts, supplied instructions, and provenance. Empty support is visibly not
+applicable, and perfect PSNR is labeled unbounded. It does not rank samples, combine
+scores, set quality thresholds, or determine instruction success. Text fields longer
+than 4,000 characters are visibly shortened; complete supplied text remains in JSON.
+
+Report rendering reloads samples sequentially after evaluation. Reloaded assets are
+checked against evaluation hashes. Failed/unreadable/changed inputs show an explanation
+instead of previews; metric results are retained. As with evaluation, keep inputs static
+throughout the command. Report rendering is excluded from recorded evaluation timing.
+
+Embedded base64 preview data is limited to 4 MiB per report. When the preview budget
+is insufficient for a sample's four panels, its previews are omitted with a visible
+notice; all measurements and diagnostics remain. The entire HTML is limited to 8 MiB.
+Exceeding that limit returns exit code 2 with `report_limit_exceeded`; full JSON/CSV
+have already been written. Output writing remains nontransactional, including with
+`--overwrite`: an error can leave incomplete files or a report from the previous run.
+Check the command's exit code before consuming its outputs.
 
 ## Expected behavior by case
 

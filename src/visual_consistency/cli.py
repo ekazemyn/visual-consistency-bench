@@ -14,6 +14,7 @@ from time import perf_counter
 from visual_consistency.images import MAX_PIXELS, MAX_SIDE, load_sample
 from visual_consistency.manifest import ValidationError, load_manifest, resolve_local_path
 from visual_consistency.metrics import SSIM_PARAMETERS, measure_preservation
+from visual_consistency.report import render_report
 
 ASSETS = ("original_path", "edited_path", "mask_path")
 CSV_FIELDS = (
@@ -165,12 +166,12 @@ def write_results(result, output):
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Measure image-edit preservation from a manifest.")
     parser.add_argument("manifest", type=Path)
-    parser.add_argument("output", type=Path, help="Directory for results.json and metrics.csv")
-    parser.add_argument("--overwrite", action="store_true", help="Replace the two result files")
+    parser.add_argument("output", type=Path, help="Directory for JSON, CSV, and HTML results")
+    parser.add_argument("--overwrite", action="store_true", help="Replace the three result files")
     args = parser.parse_args(argv)
     try:
         manifest = load_manifest(args.manifest)
-        targets = [args.output / name for name in ("results.json", "metrics.csv")]
+        targets = [args.output / name for name in ("results.json", "metrics.csv", "report.html")]
         protected = {manifest.path}
         for record in manifest.samples:
             for field in ASSETS:
@@ -192,6 +193,7 @@ def main(argv=None):
         result = evaluate_manifest(manifest)
         args.output.mkdir(parents=True, exist_ok=True)
         write_results(result, args.output)
+        (args.output / "report.html").write_text(render_report(result, manifest), encoding="utf-8")
     except ValidationError as error:
         print(f"{error.code}: {error}", file=sys.stderr)
         return 2

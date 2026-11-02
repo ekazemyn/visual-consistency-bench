@@ -47,7 +47,10 @@ After setup, run the included eight synthetic controls:
 .\.venv\Scripts\python.exe -m visual_consistency examples/images/manifest.json outputs/image-demo
 ```
 
-This writes `results.json` and `metrics.csv`. Existing results require `--overwrite`.
+This writes `results.json`, `metrics.csv`, and a standalone `report.html`.
+Open `outputs/image-demo/report.html` in a browser to inspect original/edit previews,
+mask overlays, difference views, measurements, and failures offline.
+Existing results require `--overwrite`.
 The installed `visual-consistency` command accepts the same arguments. Exit codes
 are 0 for a completed run without sample failures, 1 for retained sample failures,
 and 2 for invalid arguments, manifest errors, or output errors.
