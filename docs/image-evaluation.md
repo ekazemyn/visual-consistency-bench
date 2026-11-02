@@ -173,7 +173,7 @@ measurements = measure_preservation(loaded)
 
 The returned dictionary contains `support`, `metrics`, and measurement `warnings`.
 Input warnings remain on `loaded.warnings`; callers retain both lists. This API does
-not yet produce a complete run result, CLI output, or report. It does not mutate inputs.
+not itself produce a complete run result or write files. It does not mutate inputs.
 Metric records include `value`, `status`, `support_count`, `support_unit`, `direction`,
 and effective `parameters`. Pixel support counts spatial pixels, each contributing
 three equally weighted RGB channels.
@@ -263,9 +263,58 @@ Warnings/errors carry a stable code and human-readable message. Initial codes in
 paths in shareable output. Manifest structural errors use `invalid_manifest` at run level.
 
 All serialized numbers must be finite. Undefined metric values are JSON null plus a
-status/reason, never zero placeholders or nonstandard NaN/Infinity. Exact JSON nesting
-and CSV column layout are outside this semantic contract.
+status/reason, never zero placeholders or nonstandard NaN/Infinity. The concrete
+JSON and CSV layout is described below.
 Errors must not silently exclude difficult examples from counts or comparisons.
+
+## Command-line results
+
+With the project installed, run `python -m visual_consistency MANIFEST OUTPUT_DIR`
+or `visual-consistency MANIFEST OUTPUT_DIR`. No weights or network access are needed.
+`--overwrite` permits replacement of `results.json` and `metrics.csv` only; unrelated
+files are retained. Output targets cannot replace the manifest, input assets, local
+license notices, or symlink targets. Keep inputs unchanged throughout a run: hashing
+and decoding are separate reads, not a filesystem snapshot.
+
+`results.json` contains one run object with schema/contract/package versions,
+Python and numerical/image dependency versions, dataset ID, manifest SHA-256,
+effective settings, UTC start time, wall duration, timing definition, `counts`, and
+ordered `samples`. Settings record image limits, RGB byte normalization, supplied
+alignment, and SSIM parameters; metric records also retain their own parameters.
+No automatic preprocessing beyond the documented grayscale expansion occurs.
+
+Each sample contains its ID, source-group ID, kind, supplied instruction/provenance,
+`status`, `input_sha256` (keyed by the three manifest asset-field names), decoded
+`width`/`height`, `input_modes`, `grayscale_expanded` flags for original/edit,
+`support`, `metrics`, `warnings`, `errors`, and `wall_duration_seconds`.
+Asset hashes refer to original file bytes, not normalized pixels. Failed samples
+retain known hashes and metadata; unavailable fields are null and metrics are empty.
+An unexpected processing exception produces a path-free `processing_error` record.
+Every submitted sample is evaluated or failed, including samples with no preservation
+support as evaluated. No failed sample is dropped.
+
+`metrics.csv` is UTF-8 with one row per sample/metric. Columns are `sample_id`,
+`source_group_id`, `sample_kind`, `sample_status`, `metric`, `value`, `metric_status`,
+`support_count`, `support_unit`, `direction`, `parameters` (a JSON object),
+`warning_codes`, and `error_codes` (semicolon-separated). A failed sample has one row
+with empty metric columns. Null metric values become empty CSV cells; always consult
+status to distinguish perfect PSNR from not-applicable results. Instruction and
+provenance text stay in JSON rather than being duplicated into spreadsheet cells.
+
+Exit code 0 means no sample failed; 1 means outputs were written with sample failures;
+2 means argument, manifest, or I/O/output failure. Invalid manifests produce no result
+files. Output writing is not transactional: an I/O failure can leave partial output;
+check the exit code before consuming it. Existing result files are refused without
+`--overwrite`. Timing excludes manifest validation and serialization/writing; sample
+timing includes hashing, loading, and measurement. It measures wall time, not CPU time.
+Repeated static-input runs produce identical metrics/hashes/settings; UTC timestamps
+and run/sample durations vary.
+
+The output deliberately omits local asset paths, manifest/output paths, user names,
+and host details. Original manifests and assets remain local. Instructions and
+provenance are copied as supplied and can contain private text or URLs: review them
+before sharing results. These JSON/CSV files are not an HTML report or a validated
+quality benchmark.
 
 ## Expected behavior by case
 

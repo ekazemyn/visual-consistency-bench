@@ -39,6 +39,23 @@ In VS Code, select `.venv/Scripts/python.exe` as the Python interpreter and the
 notebook kernel. The Python and Jupyter extensions are needed for notebook editing;
 no separate Jupyter server is required.
 
+## Evaluate image preservation
+
+After setup, run the included eight synthetic controls:
+
+```powershell
+.\.venv\Scripts\python.exe -m visual_consistency examples/images/manifest.json outputs/image-demo
+```
+
+This writes `results.json` and `metrics.csv`. Existing results require `--overwrite`.
+The installed `visual-consistency` command accepts the same arguments. Exit codes
+are 0 for a completed run without sample failures, 1 for retained sample failures,
+and 2 for invalid arguments, manifest errors, or output errors.
+
+See the [structured output guide](docs/image-evaluation.md#command-line-results)
+for result fields, support/status interpretation, and privacy limits. The controls
+demonstrate pixel-change measurements; they do not validate generated-image quality.
+
 ## Stack
 
 | Purpose | Tools |
